@@ -4,6 +4,3 @@ module.exports.home = function(req, res){
     });
 }
 
-module.exports.createPost = function(req, res){
-    return res.end('<h1> Create Post </h1>');
-}
