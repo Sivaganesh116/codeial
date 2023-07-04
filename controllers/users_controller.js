@@ -1,5 +1,3 @@
-const db = require('../config/mongoose.js');
-const User = require('../models/user')
 
 module.exports.profile = function(req, res){
     return res.render('user_profile', {title: `Profile | ${res.locals.user.name}`});
@@ -55,4 +53,14 @@ module.exports.create = function(req, res){
 module.exports.createSession = function(req, res){
     //using  pasportjs
     return res.redirect('/');
+}
+
+module.exports.destroySession = function(req, res){
+    req.logout((err)=>{
+        if(err){
+            console.log("Error logging out: ", err);
+            return;
+        }
+        return res.redirect('/');
+    });
 }
