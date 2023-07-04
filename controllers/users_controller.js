@@ -2,7 +2,18 @@ const db = require('../config/mongoose.js');
 const User = require('../models/user')
 
 module.exports.profile = function(req, res){
-    res.end("<h1> User Profile </h1>");
+    if(req.cookies.email != null && req.cookies.email != undefined){
+        User.findOne({email: req.cookies.email})
+        .then((user)=>{
+            console.log(user);
+            return res.render("profile",{user_data: user, title: `Profile | ${user.name}`});
+        })
+        .catch((err)=>{
+            console.log('Error finding user: ', err);
+            return res.redirect('/users/sign-in');
+        })
+    }
+    else return res.redirect('/users/sign-in');
 }
 
 module.exports.settings = function(req, res){
@@ -47,5 +58,20 @@ module.exports.create = function(req, res){
 }
 
 module.exports.createSession = function(req, res){
-    
+    User.findOne({email: req.body.email})
+    .then((user)=>{
+        if(user){
+            if(user.password != req.body.password){
+                console.log("Wrong Password");
+                return res.redirect('back');
+            }
+            res.cookie('email', user.email);
+            return res.redirect('/users/profile');
+        } else {
+
+        }
+    })
+    .catch((err)=>{
+        console.log("Error finding user: ", err);
+    })
 }
