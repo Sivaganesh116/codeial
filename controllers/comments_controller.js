@@ -28,7 +28,6 @@ module.exports.destroy = function(req, res){
     Comment.findById(req.params.id)
     .then(comment=>{
         if(req.user.id == comment.user){
-            // let postId = comment.post;
             Comment.deleteOne({_id : req.params.id})
             .then(comment=>{
                 Post.findByIdAndUpdate(
