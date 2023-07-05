@@ -1,0 +1,14 @@
+header {
+  background-color: blue;
+  color: white;
+  height: 10vh; }
+  header ul {
+    height: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; }
+    header ul #logo {
+      font-family: Helvetica, sans-serif; }
+    header ul a {
+      color: white; }
