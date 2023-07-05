@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const port = 8000;
 const db = require('./config/mongoose.js');
-const User = require('./models/user');
 const cookieParser = require('cookie-parser');
 const expressLayouts = require('express-ejs-layouts');
 const bodyParser = require('body-parser');
