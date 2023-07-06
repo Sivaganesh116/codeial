@@ -1,55 +1,42 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 
-module.exports.create = function(req, res){
-    Post.findById(req.body.post)
-    .then(post=>{
-        Comment.create({
+module.exports.create = async function(req, res){
+    try{
+        let post = await Post.findById(req.body.post)
+    
+        let comment = await Comment.create({
             content: req.body.content,
             post: req.body.post,
-            user: req.user._id
+            user: req.user.id
         })
-        .then(comment=>{
-            post.comments.push(comment);
-            post.save();
+        
+        post.comments.push(comment);
+        post.save();
 
-            res.redirect('/');
-        })
-        .catch(err=>{
-            console.log('Error creating comment: ', err);
-        })
-    })
-    .catch(err=>{
-        console.log('Error finding post: ', err);
-    })
+        return res.redirect('/');
+    }catch(err){
+        console.log("Erro: ", err);
+    }
+    
 }
 
-module.exports.destroy = function(req, res){
-    Comment.findById(req.params.id)
-    .then(comment=>{
+module.exports.destroy =async function(req, res){
+    try{
+        let comment = await Comment.findById(req.params.id)
+    
         if(req.user.id == comment.user){
-            Comment.deleteOne({_id : req.params.id})
-            .then(comment=>{
-                Post.findByIdAndUpdate(
-                    comment.post,
-                    {$pull: {comments: req.params.id}}
-                )
-                .then(post=>{
-                    return res.redirect('back');
-                })
-                .catch(err=>{
-                    console.log("Error in finding post: ", err);
-                })
-            })
-            .catch(err=>{
-                console.log("Error in deleting comment: ", err);
-            })
+            await Comment.deleteOne({_id : req.params.id})
+            
+            await Post.findByIdAndUpdate(
+                comment.post,
+                {$pull: {comments: req.params.id}}
+            )
+            return res.redirect('back');
         } else {
             return res.redirect('back');
         }
-    })
-    .catch(err=>{
-        console.log('Error finding comment: ', err);
-        return res.redirect('back');
-    })
+    }catch(err){
+        console.log("Error: ",err);
+    }
 }

@@ -49,29 +49,23 @@ module.exports.signIn = function(req, res){
     })
 }
 
-module.exports.create = function(req, res){
-    if(req.body.password != req.body.confirm_password) return res.redirect('back');
+module.exports.create = async function(req, res){
+    try{
+        if(req.body.password != req.body.confirm_password) return res.redirect('back');
 
-    User.findOne({email: req.body.email})
-    .then((user)=>{
+        let user = await User.findOne({email: req.body.email})
+        
         if(!user){
-            User.create(req.body)
-            .then((user)=>{
-                return res.redirect('/users/sign-in');
-            })
-            .catch((err)=>{
-                console.log('Error creating user: ', err);
-                return;
-            })
+            let newUser = User.create(req.body)
+            return res.redirect('/users/sign-in');
         }
         else{
             console.log("User already exists: ", user);
             return res.redirect('back');
         }
-    })
-    .catch((err)=>{
-        console.log("Error finding user :", err);
-    })
+    }catch(err){
+        console.log("Error :", err);
+    }
 }
 
 module.exports.createSession = function(req, res){
