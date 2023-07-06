@@ -13,12 +13,20 @@ module.exports.home = async function(req, res){
                 })
 
         let users = await User.find({})
-                
-        return res.render('home', {
-            title: 'codeial | Home',
-            posts: posts,
-            all_users: users
-        });
+        if(req.isAuthenticated()){
+            return res.render('home', {
+                title: 'codeial | Home',
+                posts: posts,
+                all_users: users
+            });
+        } else {
+            req.flash('error', 'Log in to unlock more features!');
+            return res.render('home', {
+                title: 'codeial | Home',
+                posts: posts,
+                all_users: users
+            });
+        }
     } catch(err){
         console.log("Error: ", err);
     }

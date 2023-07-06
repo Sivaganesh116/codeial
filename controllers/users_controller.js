@@ -51,15 +51,20 @@ module.exports.signIn = function(req, res){
 
 module.exports.create = async function(req, res){
     try{
-        if(req.body.password != req.body.confirm_password) return res.redirect('back');
+        if(req.body.password != req.body.confirm_password) {
+            req.flash('error', "Passwords didn't match");
+            return res.redirect('back');
+        }
 
         let user = await User.findOne({email: req.body.email})
         
         if(!user){
             let newUser = User.create(req.body)
+            req.flash('success', 'Signed Up successfully!')
             return res.redirect('/users/sign-in');
         }
         else{
+            req.flash('error', 'User already exists');
             console.log("User already exists: ", user);
             return res.redirect('back');
         }
@@ -70,6 +75,7 @@ module.exports.create = async function(req, res){
 
 module.exports.createSession = function(req, res){
     //using  pasportjs
+    req.flash('success', 'Logged in successfully!');
     return res.redirect('/');
 }
 
@@ -79,6 +85,7 @@ module.exports.destroySession = function(req, res){
             console.log("Error logging out: ", err);
             return;
         }
+        req.flash('success', 'Logged out successfully!');
         return res.redirect('/');
     });
 }

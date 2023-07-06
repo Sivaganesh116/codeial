@@ -13,7 +13,7 @@ module.exports.create = async function(req, res){
         
         post.comments.push(comment);
         post.save();
-
+        req.flash('sucess', 'Comment added!');
         return res.redirect('/');
     }catch(err){
         console.log("Erro: ", err);
@@ -32,8 +32,10 @@ module.exports.destroy =async function(req, res){
                 comment.post,
                 {$pull: {comments: req.params.id}}
             )
+            req.flash('success', 'Comment deleted!');
             return res.redirect('back');
         } else {
+            req.flash('error', 'Unauthorized!');
             return res.redirect('back');
         }
     }catch(err){
