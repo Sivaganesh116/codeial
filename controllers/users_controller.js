@@ -1,7 +1,30 @@
 const User = require('../models/user');
 
 module.exports.profile = function(req, res){
-    return res.render('user_profile', {title: `Profile | ${res.locals.user.name}`});
+    User.findById(req.params.id)
+    .then(user=>{
+        return res.render('user_profile', {profile_user: user, title: 'User Profile'});
+    })
+    .catch(err=>{
+        console.log('Error finding profile user: ', err);
+    })
+}
+
+module.exports.update = function (req, res){
+    if(req.user.id == req.params.id){
+        User.findByIdAndUpdate(
+            req.params.id,
+            req.body
+        )
+        .then(user=>{
+            return res.redirect('back');
+        })
+        .catch(err=>{
+            console.log('Error finding the user: ', err);
+        })
+    } else {
+        return res.status(401).send('Unauthorized');
+    }
 }
 
 module.exports.settings = function(req, res){
